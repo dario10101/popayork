@@ -84,6 +84,8 @@ game_state[37, 36] = 1
 
 paused = False
 
+print(game_state)
+
 while True:
     #eventos
     for event in pygame.event.get():

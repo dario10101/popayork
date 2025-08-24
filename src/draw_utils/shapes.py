@@ -16,17 +16,15 @@ class Shapes():
 
 
     #dibujar un poligono en la cuadricula
-    def draw_polygon(self, x,y,game_state_info, fill):
+    def draw_rectangle(self, x,y, entity_info, fill):
         # dibijamos el poligono de la celula
         polygon_info = [( (x)     * self.size_x, (y)     * self.size_y),
                         ( (x + 1) * self.size_x, (y)     * self.size_y),
                         ( (x + 1) * self.size_x, (y + 1) * self.size_y),
                         ( (x)     * self.size_x, (y + 1) * self.size_y) ]
 
-        if(game_state_info[x, y] == 0):
-            self.pygame.draw.polygon(self.screen, self.death_cell_color, polygon_info, fill)
-        else:
-            self.pygame.draw.polygon(self.screen, self.cell_color, polygon_info, 0) 
+        
+        self.pygame.draw.polygon(self.screen, entity_info['color'], polygon_info, fill)
 
 
     def draw_circle(self, x, y, game_state_info, fill):

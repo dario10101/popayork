@@ -1,0 +1,13 @@
+# https://www.rapidtables.org/web/color/RGB_Color.html
+# https://htmlcolorcodes.com/es/circulo-cromatico/
+
+basic-entities:
+  - id: 1
+    name: grass
+    color: [95, 191, 115]
+  - id: 2
+    name: street
+    color: [139, 152, 149]
+  - id: 3
+    name: tree
+    color: [33, 135, 12]

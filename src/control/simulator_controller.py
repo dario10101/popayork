@@ -3,16 +3,18 @@ import numpy as np
 import time
 import sys
 
+
 from src.draw_utils.shapes import *
 
 class SimulatorController():
 
-    def __init__(self, width, height, cells_x, cells_y):
+    def __init__(self, width, height, cells_x, cells_y, entities, map):
         pygame.init()
         pygame.display.set_caption('Game of life')
         self.screen  = pygame.display.set_mode((width, height))
 
-        self.background_color = 25, 25, 25
+        self.entities = entities
+        self.background_color = entities[1]['color']
 
         self.cells_x = cells_x
         self.cells_y = cells_y
@@ -23,8 +25,8 @@ class SimulatorController():
 
         self.shapes = Shapes(pygame, self.screen, width, height, cells_x, cells_y)
         
-        self.game_state = np.zeros((cells_x, cells_y))
-        self.paused = False
+        self.game_state = np.array(map)
+        self.paused = False        
 
     
     def run(self):
@@ -59,28 +61,10 @@ class SimulatorController():
 
         # Dibujo de la cuadricula
         for y in range(0, self.cells_y):
-            for x in range(0, self.cells_x):            
-
-                # numero de vecinos cercanos, con el % hacemos que cuando se salga de los limites, regrese por el otro lado
-                n_neigh = \
-                        self.game_state[ (x - 1) % self.cells_x, (y - 1) % self.cells_y ] + \
-                        self.game_state[ (x)     % self.cells_x, (y - 1) % self.cells_y ] + \
-                        self.game_state[ (x + 1) % self.cells_x, (y - 1) % self.cells_y ] + \
-                        self.game_state[ (x - 1) % self.cells_x, (y)     % self.cells_y ] + \
-                        self.game_state[ (x + 1) % self.cells_x, (y)     % self.cells_y ] + \
-                        self.game_state[ (x - 1) % self.cells_x, (y + 1) % self.cells_y ] + \
-                        self.game_state[ (x)     % self.cells_x, (y + 1) % self.cells_y ] + \
-                        self.game_state[ (x + 1) % self.cells_x, (y + 1) % self.cells_y ]
-
-                # una celula muerta con 3 vivas al rededor, revive 
-                if self.game_state[x, y] == 0 and n_neigh == 3:
-                    game_state_aux[x, y] = 1
-
-                # una celula viva solo sigue viva si tiene 2 o 3 vecinas vivas
-                elif self.game_state[x, y] == 1 and (n_neigh < 2 or n_neigh > 3):
-                    game_state_aux[x, y] = 0
-
-                self.shapes.draw_polygon(x,y,game_state_aux, 1)              
+            for x in range(0, self.cells_x):  
+                status = game_state_aux[x, y]
+                if status != 1:         
+                    self.shapes.draw_rectangle(x,y,self.entities[status], 0)              
 
                 
         #mostrar los cambios en la pantalla   
@@ -100,16 +84,18 @@ class SimulatorController():
 
             #celda que selecciona el mouse
             celX, celY = int(np.floor(posX / self.size_x)), int(np.floor(posY / self.size_y))
-
+            
+            new_status = self.game_state[celX][celY]
             # click izquierdo
-            if(mouse_click[0] == 1):
-                self.game_state[celX][celY] = 1
+            if mouse_click[0] == 1:
+                new_status = 2
 
             # click derecho
-            if(mouse_click[2] == 1):
-                self.game_state[celX][celY] = 0
+            if mouse_click[2] == 1:
+                new_status = 3
 
-            self.shapes.draw_polygon(celX, celY, self.game_state, 0)
+            self.game_state[celX][celY] = new_status
+            self.shapes.draw_rectangle(celX, celY, self.entities[new_status], 0)
 
             #mostrar los cambios en la pantalla   
             pygame.display.flip() 
